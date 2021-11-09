@@ -1,0 +1,4 @@
+Scaffold-DbContext 'Data Source= H:\wpa.db' Microsoft.EntityFrameworkCore.Sqlite -Context WorkoutPlannerDB -Tables DayPlan,Excercises,TagsForExcercises -Force
+
+string dbPath = @"H:\wpa.db";
+                optionsBuilder.UseSqlite("Data Source="+dbPath);
