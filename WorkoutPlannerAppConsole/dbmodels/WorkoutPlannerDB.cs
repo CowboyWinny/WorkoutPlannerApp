@@ -25,7 +25,7 @@ namespace WorkoutPlannerAppConsole
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string dbPath = @"H:\wpa.db";
+                string dbPath = @"./database/wpa.db";
                 optionsBuilder.UseSqlite("Data Source=" + dbPath);
             }
         }
