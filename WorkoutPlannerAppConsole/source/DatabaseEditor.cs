@@ -32,7 +32,6 @@ namespace WorkoutPlannerAppConsole
                 return (affected == 1);
             }
         }
-
         public static bool AddExcercise(Excercise newExcercise)
         {
             using (var db = new WorkoutPlannerDB())
@@ -43,7 +42,6 @@ namespace WorkoutPlannerAppConsole
                 return (affected == 1);
             }
         }
-
         public static bool AddExcercise(string name,
                                         long caloriesCost = 0,
                                         string description = null,
@@ -69,7 +67,6 @@ namespace WorkoutPlannerAppConsole
                 return DatabaseEditor.AddExcercise(name, tagsForExcerciseID, caloriesCost, description);
             }
         }
-
         public static bool AddExcercise(string name,
                                         long caloriesCost = 0,
                                         string description = null)
@@ -88,7 +85,6 @@ namespace WorkoutPlannerAppConsole
                 return DatabaseEditor.AddExcercise(name, tagsForExcerciseID, caloriesCost, description);
             }
         }
-
         public static bool AddTagsForExcercise( bool arms = false,
                                                 bool legs = false,
                                                 bool back = false,
@@ -136,7 +132,6 @@ namespace WorkoutPlannerAppConsole
                 }
             }
         }
-
         public static List<Excercise> GetAllExcercises()
         {
             using (var db = new WorkoutPlannerDB())
@@ -153,7 +148,6 @@ namespace WorkoutPlannerAppConsole
                 return allExcercises;
             }
         }
-
         public static List<Excercise> GetExcercisesWithTag(ExcerciseTags tag)
         {
             using (var db = new WorkoutPlannerDB())
@@ -201,7 +195,6 @@ namespace WorkoutPlannerAppConsole
                 return excercisesWithTag;
             }
         }
-
         public static List<Excercise> GetExcercisesWithTags(List<ExcerciseTags> tags)
         {
             using (var db = new WorkoutPlannerDB())
@@ -244,7 +237,6 @@ namespace WorkoutPlannerAppConsole
                 return excercisesWithTags;
             }
         }
-
         public static List<ExcerciseTags> GetExcerciseTags(Excercise excercise)
         {
             List<ExcerciseTags> tags = new();
@@ -276,5 +268,73 @@ namespace WorkoutPlannerAppConsole
 
             return tags;
         }
+        public static bool AddDayPlan(List <DayPlan> excercisesForDay)
+        {
+            using (var db = new WorkoutPlannerDB())
+            {
+                foreach(DayPlan excerciseForDay in excercisesForDay)
+                {
+                    db.DayPlans.Add(excerciseForDay);
+                }
+
+                int affected = db.SaveChanges();
+                return (affected == 1);
+            }
+        }
+        public static bool AddExcerciseForDay(  DateTime dateForTraining, 
+                                                Excercise excercise,
+                                                long rounds = 1,
+                                                long repeats = 1,
+                                                bool isSingleDay = true)
+        {
+            using (var db = new WorkoutPlannerDB())
+            {
+                var newDayPlan = DatabaseEditor.CreateExcerciseForDay(  dateForTraining, 
+                                                                        excercise, 
+                                                                        rounds,
+                                                                        repeats,
+                                                                        isSingleDay);
+
+                db.DayPlans.Add(newDayPlan);
+
+                int affected = db.SaveChanges();
+                return (affected == 1);
+            }
+        }
+        public static DayPlan CreateExcerciseForDay(DateTime dateForTraining, 
+                                                    Excercise excercise,
+                                                    long rounds = 1,
+                                                    long repeats = 1,
+                                                    bool isSingleDay = true)
+        {
+            var newDayPlan = new DayPlan
+            {
+                ID = DayPlan.NewID(),                    DayOfWeek = dateForTraining.DayOfWeek.ToString(),
+                Date = dateForTraining.Date.ToString(),
+                ExcerciseID = excercise.ID,
+                Rounds = rounds,
+                Repeats = repeats,
+                IsSingleDay = isSingleDay
+            };
+            return newDayPlan;
+        }
+        public static List<DayPlan> GetDayExcercises(DateTime trainingDate)
+        {
+            using (var db = new WorkoutPlannerDB())
+            {
+                IQueryable<DayPlan> day = db.DayPlans.Include(e => e.Excercise)
+                                                                .Where(e => e.Date == trainingDate.Date.ToString());
+                List<DayPlan> dayExcercises = new();
+                if (day.Any())
+                {
+                    foreach(DayPlan dayExcercise in day)
+                    {
+                        dayExcercises.Add(dayExcercise);
+                    }
+                }
+                return dayExcercises;
+            }
+        }
+
     }
 }

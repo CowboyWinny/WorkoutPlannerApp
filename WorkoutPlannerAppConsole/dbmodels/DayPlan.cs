@@ -13,6 +13,7 @@ namespace WorkoutPlannerAppConsole
         public long ExcerciseID { get; set; }
         public long Rounds { get; set; }
         public long Repeats { get; set; }
+        public bool IsSingleDay {get; set; }
 
         public virtual Excercise Excercise { get; set; }
     }

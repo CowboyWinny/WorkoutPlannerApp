@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace WorkoutPlannerAppConsole
 {
@@ -12,14 +13,24 @@ namespace WorkoutPlannerAppConsole
         {
             using (var db = new WorkoutPlannerDB())
             {
-                long newID = 0;
-                IQueryable<TagsForExcercise> excerciseTags = db.TagsForExcercises.OrderBy(tag => tag.ID);
-                if(excerciseTags.Any())
-                {
-                    newID = excerciseTags.Last().ID + 1;
-                    return newID;
+                long newID = default;
+                using (RNGCryptoServiceProvider rg = new RNGCryptoServiceProvider()) 
+                { 
+                    byte[] rno = new byte[8];    
+                    rg.GetBytes(rno);    
+                    newID = BitConverter.ToInt64(rno, 0);
+                    if(newID < 0)
+                    {
+                        newID *= -1;
+                    }
                 }
-                else return 1;
+
+                IQueryable<TagsForExcercise> excerciseTags = db.TagsForExcercises.Where(e => e.ID == newID);
+                if (excerciseTags.Any())
+                {
+                    return TagsForExcercise.NewID();
+                }
+                else return newID;
             }
         }
     }

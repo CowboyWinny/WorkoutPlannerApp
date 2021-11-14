@@ -47,6 +47,8 @@ namespace WorkoutPlannerAppConsole
 
                 entity.Property(e => e.Rounds).HasDefaultValueSql("1");
 
+                entity.Property(e => e.IsSingleDay).HasDefaultValueSql("1");
+
                 entity.HasOne(d => d.Excercise)
                     .WithMany(p => p.DayPlans)
                     .HasForeignKey(d => d.ExcerciseID)

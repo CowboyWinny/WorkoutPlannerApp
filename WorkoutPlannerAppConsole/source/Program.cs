@@ -13,13 +13,18 @@ namespace WorkoutPlannerAppConsole
             WriteLine("Program started");
             using (var db = new WorkoutPlannerDB())
             {
-                List<Excercise> excercises = DatabaseEditor.GetExcercisesWithTag(ExcerciseTags.Core);
-                if (excercises is not null)
+                List<DayPlan> excercises = new();
+                Excercise snatch = DatabaseEditor.GetExcercise("Snatch");
+                Excercise swing = DatabaseEditor.GetExcercise("Swing");
+                excercises.Add(DatabaseEditor.CreateExcerciseForDay(new DateTime(2021, 11, 15), snatch, 6, 6));
+                excercises.Add(DatabaseEditor.CreateExcerciseForDay(new DateTime(2021, 11, 15), swing, 6, 50));
+                DatabaseEditor.AddDayPlan(excercises);
+                List<DayPlan> dayPlan = DatabaseEditor.GetDayExcercises(new DateTime(2021, 11, 15));
+                if (dayPlan is not null)
                 {
-                    foreach (Excercise e in excercises)
+                    foreach (DayPlan e in dayPlan)
                     {
-                        WriteLine($"{e.ID} excercise has name {e.Name} and core is {e.TagsForExcercises.Core}");
-                        WriteLine($"{e.Description}");
+                        WriteLine($"{e.ID} {e.DayOfWeek}, {e.Date}: {e.Excercise.Name} {e.Rounds} rounds for {e.Repeats} repeats ");
                     }
                 }
             }
